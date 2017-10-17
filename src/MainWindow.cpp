@@ -1,11 +1,11 @@
 #include "MainWindow.h"
 #include <cassert>
 #include <QtCore/QSettings>
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QSlider>
 #include "QVideoDecoder.h"
@@ -71,7 +71,13 @@ MainWindow::MainWindow()
 	setCentralWidget(centralTabWidget);
 
 	//Setup connections.
-	QObject::connect(movieFileLineEdit,&QLineEdit::textChanged,[=]()
+	connect(movieFileButton,&QPushButton::pressed,[=]()
+	{
+		QString filePath = QFileDialog::getOpenFileName(this,"Open File",movieFileLineEdit->text());
+		if(!filePath.isEmpty())
+			movieFileLineEdit->setText(filePath);
+	});
+	connect(movieFileLineEdit,&QLineEdit::textChanged,[=]()
 	{
 		QSettings settings;
 		settings.setValue("input/movieFile",movieFileLineEdit->text());
@@ -89,7 +95,7 @@ MainWindow::MainWindow()
 		inputMaxFrameSlider->setMinimum(inputCurrentFrameSlider->minimum());
 		inputMaxFrameSlider->setMaximum(inputCurrentFrameSlider->maximum());
 	});
-	QObject::connect(inputCurrentFrameSlider,&QSlider::valueChanged,[=](int position)
+	connect(inputCurrentFrameSlider,&QSlider::valueChanged,[=](int position)
 	{
 		QImage image;
 		videoDecoder->seekMs(position);
