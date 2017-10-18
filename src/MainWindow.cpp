@@ -12,11 +12,16 @@
 
 //TODO: Indicate when movie cannot be loaded.
 //TODO: Use a shared library to do the processing and just pass back a vector of "views". These don't have to be 1x1 for each input image.
-//TODO: Use QSettings to remember all settings when program loads.
 //TODO: Add a time line widget to more accurately work with video.
 //TODO: Support loading a set of images as input.
 //TODO: Support streaming video from an Android device.
 //TODO: Support different output views.
+
+static const char* SETTINGS_MAIN_WINDOW_GEOMETRY = "mainWindow/geometry";
+static const char* SETTINGS_INPUT_MOVIE_FILE = "input/movieFile";
+static const char* SETTINGS_INPUT_CURRENT_FRAME = "input/currentFrame";
+static const char* SETTINGS_INPUT_MIN_FRAME = "input/minFrame";
+static const char* SETTINGS_INPUT_MAX_FRAME = "input/maxFrame";
 
 MainWindow::MainWindow()
 {
@@ -28,7 +33,7 @@ MainWindow::MainWindow()
 	QPushButton* movieFileButton = new QPushButton("Browse...");
 	inputCurrentFrameLabel = new QLabel();
 	inputStatusLabel = new QLabel("Current: N/A Duration: N/A");
-	QSlider* inputCurrentFrameSlider = new QSlider(Qt::Horizontal);
+	inputCurrentFrameSlider = new QSlider(Qt::Horizontal);
 	inputMinFrameSlider = new QSlider(Qt::Horizontal);
 	inputMaxFrameSlider = new QSlider(Qt::Horizontal);
 	QPushButton* grabFramesButton = new QPushButton("Grab Frames");
@@ -80,7 +85,7 @@ MainWindow::MainWindow()
 	connect(movieFileLineEdit,&QLineEdit::textChanged,[=]()
 	{
 		QSettings settings;
-		settings.setValue("input/movieFile",movieFileLineEdit->text());
+		settings.setValue(SETTINGS_INPUT_MOVIE_FILE,movieFileLineEdit->text());
 
 		videoDecoder->openFile(QString("file:///") + movieFileLineEdit->text());
 		inputStatusLabel->setText("Current: N/A Duration: " + QString::number(videoDecoder->getVideoLengthMs()));
@@ -125,7 +130,20 @@ MainWindow::MainWindow()
 
 	//Restore settings from last run.
 	QSettings settings;
-	movieFileLineEdit->setText(settings.value("input/movieFile").toString());
+	restoreGeometry(settings.value(SETTINGS_MAIN_WINDOW_GEOMETRY).toByteArray());
+	movieFileLineEdit->setText(settings.value(SETTINGS_INPUT_MOVIE_FILE).toString());
+	inputCurrentFrameSlider->setValue(settings.value(SETTINGS_INPUT_CURRENT_FRAME).toInt());
+	inputMinFrameSlider->setValue(settings.value(SETTINGS_INPUT_MIN_FRAME).toInt());
+	inputMaxFrameSlider->setValue(settings.value(SETTINGS_INPUT_MAX_FRAME).toInt());
+}
+
+MainWindow::~MainWindow()
+{
+	QSettings settings;
+	settings.setValue(SETTINGS_MAIN_WINDOW_GEOMETRY,saveGeometry());
+	settings.setValue(SETTINGS_INPUT_CURRENT_FRAME,inputCurrentFrameSlider->value());
+	settings.setValue(SETTINGS_INPUT_MIN_FRAME,inputMinFrameSlider->value());
+	settings.setValue(SETTINGS_INPUT_MAX_FRAME,inputMaxFrameSlider->value());
 }
 
 void MainWindow::ProcessVideoFrames()

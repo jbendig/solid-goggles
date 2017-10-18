@@ -12,10 +12,12 @@ class MainWindow : public QMainWindow
 		Q_OBJECT
 	public:
 		MainWindow();
+		~MainWindow();
 	private:
 		QVideoDecoder* videoDecoder;
 		QLabel* inputCurrentFrameLabel;
 		QLabel* inputStatusLabel;
+		QSlider* inputCurrentFrameSlider;
 		QSlider* inputMinFrameSlider;
 		QSlider* inputMaxFrameSlider;
 		QLabel* outputCurrentFrameLabel;
