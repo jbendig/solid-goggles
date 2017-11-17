@@ -19,7 +19,9 @@ FIND_PACKAGE(Qt5Widgets REQUIRED)
 
 SET(SOURCE_FILES
 	src/main.cpp
+	src/ImageLabel.cpp
 	src/MainWindow.cpp
+	src/VideoPage.cpp
 	extern/QVideoDecoder.cpp
 )
 

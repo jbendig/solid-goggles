@@ -3,29 +3,16 @@
 
 #include <QtWidgets/QMainWindow>
 
-class QLabel;
-class QSlider;
-class QVideoDecoder;
+class VideoPage;
 
 class MainWindow : public QMainWindow
 {
 		Q_OBJECT
 	public:
 		MainWindow();
-		~MainWindow();
+		virtual ~MainWindow();
 	private:
-		QVideoDecoder* videoDecoder;
-		QLabel* inputCurrentFrameLabel;
-		QLabel* inputStatusLabel;
-		QSlider* inputCurrentFrameSlider;
-		QSlider* inputMinFrameSlider;
-		QSlider* inputMaxFrameSlider;
-		QLabel* outputCurrentFrameLabel;
-		QLabel* outputStatusLabel;
-		QSlider* outputCurrentFrameSlider;
-		std::vector<std::tuple<int,QImage>> processedImages;
-	private slots:
-		void ProcessVideoFrames();
+		VideoPage* videoPage;
 };
 
 #endif
